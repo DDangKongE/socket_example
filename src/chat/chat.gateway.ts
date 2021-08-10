@@ -1,47 +1,43 @@
+import { Logger } from '@nestjs/common';
 import {
-  WebSocketGateway,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
   SubscribeMessage,
-  MessageBody,
+  WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { ChatService } from './chat.service';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
-import { Socket } from 'net';
+import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({ cors: true })
-export class ChatGateway {
-  constructor(private readonly chatService: ChatService) {}
+@WebSocketGateway({ namespace: 'chat' })
+export class ChatGateway
+  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
+  private static readonly logger = new Logger(ChatGateway.name);
 
-  @SubscribeMessage('createChat')
-  create(@MessageBody() createChatDto: CreateChatDto) {
-    return this.chatService.create(createChatDto);
+  @WebSocketServer()
+  server: Server;
+
+  afterInit() {
+    ChatGateway.logger.debug(`Socket Server Init Complete`);
   }
 
-  @SubscribeMessage('findAllChat')
-  findAll() {
-    return this.chatService.findAll();
-  }
+  handleConnection(client: Socket) {
+    ChatGateway.logger.debug(
+      `${client.id}(${client.handshake.query['username']}) is connected!`,
+    );
 
-  @SubscribeMessage('findOneChat')
-  findOne(@MessageBody('id') id: number) {
-    return this.chatService.findOne(id);
-  }
-
-  @SubscribeMessage('updateChat')
-  update(@MessageBody() updateChatDto: UpdateChatDto) {
-    return this.chatService.update(updateChatDto.id, updateChatDto);
-  }
-
-  @SubscribeMessage('removeChat')
-  remove(@MessageBody() id: number) {
-    return this.chatService.remove(id);
+    this.server.emit('msgToClient', {
+      name: `admin`,
+      text: `join chat.`,
+    });
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Client Disconnected : ${client['id']}`);
+    ChatGateway.logger.debug(`${client.id} is disconnected...`);
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
-    console.log(`Client Connected : ${client['id']}`);
+  @SubscribeMessage('msgToServer')
+  handleMessage(client: Socket, payload: { name: string; text: string }): void {
+    this.server.emit('msgToClient', payload);
   }
 }
