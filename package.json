@@ -26,13 +26,18 @@
     "@nestjs/core": "^7.5.1",
     "@nestjs/platform-express": "^7.5.1",
     "@nestjs/platform-socket.io": "^7.6.11",
+    "@nestjs/serve-static": "^2.2.2",
     "@nestjs/websockets": "^7.6.11",
     "cross-env": "^7.0.3",
+    "ejs": "^3.1.6",
+    "hbs": "^4.1.2",
     "joi": "^17.3.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
-    "socket.io-redis": "^5.4.0"
+    "socket.io-redis": "^5.4.0",
+    "vue": "^2.6.14",
+    "vue-server-renderer": "^2.6.14"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.1",
