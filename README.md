@@ -24,6 +24,8 @@
 
 ## Description
 
+Socket.io - redis 채팅 연습용
+
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
