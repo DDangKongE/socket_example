@@ -6,6 +6,7 @@ import {
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
+import { Socket } from 'net';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway {
@@ -22,7 +23,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('findOneChat')
-  findOne(@MessageBody() id: number) {
+  findOne(@MessageBody('id') id: number) {
     return this.chatService.findOne(id);
   }
 
@@ -34,5 +35,13 @@ export class ChatGateway {
   @SubscribeMessage('removeChat')
   remove(@MessageBody() id: number) {
     return this.chatService.remove(id);
+  }
+
+  handleDisconnect(client: Socket) {
+    console.log(`Client Disconnected : ${client['id']}`);
+  }
+
+  handleConnection(client: Socket, ...args: any[]) {
+    console.log(`Client Connected : ${client['id']}`);
   }
 }

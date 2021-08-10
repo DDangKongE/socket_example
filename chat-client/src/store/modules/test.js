@@ -1,22 +1,28 @@
 import produce from '../../util/produce';
+import socketio from 'socket.io-client';
 
 const TEST_REQUEST = 'TEST_REQUEST';
 const TEST_SUCCESS = 'TEST_SUCCESS';
 const TEST_ERROR = 'TEST_ERROR';
 
+const socket = socketio('http://localhost:3000');
+
 const initialState = {
   testLoading: null,
   testDone: null,
-  testList: 'aaa',
+  testList: [],
   testError: null,
 };
 
 export const btnClick = () => async (dispatch) => {
   dispatch({ type: TEST_REQUEST });
   try {
-    dispatch({
-      type: TEST_SUCCESS,
-      payload: 1111,
+    socket.emit('findAllChat', data => {
+      console.log(data);
+      dispatch({
+        type: TEST_SUCCESS,
+        payload: data,
+      });
     });
   } catch (error) {
     dispatch({

@@ -1,31 +1,38 @@
 import './App.css';
 import { useDispatch, useSelector } from 'react-redux';
-// import { btnClick } from '';
 import { btnClick } from './store/modules/test';
-import {createContext} from "react";
-import Children from "./children";
+import { createContext, useState } from 'react';
+import Children from './children';
 
 export const AppContext = createContext();
 
 function App() {
   const dispatch = useDispatch();
+  const [text, setText] = useState('');
   const { testList } = useSelector((state) => state.test);
-  console.log(testList);
-  // const onClickBtn = () => {
-  //   dispatch(btnClick());
-  // }
-    const user = {
-      name: "안수환",
-      job: "가수"
-    };
+  const onClickBtn = () => {
+    dispatch(btnClick());
+  };
   return (
-      <AppContext.Provider value={user} >
-        <div className="App">
-          <Children/>
-          {/*<button onClick={onClickBtn}>aaaa</button>*/}
-          {/*{testList}*/}
-        </div>
-      </AppContext.Provider>
+    <div className='App'>
+      <Children />
+
+      {testList.map((v,i) => {
+        return (
+          <div key={i}>{v}</div>
+        )
+      })}
+      <br />
+      <br />
+      <br />
+      <br />
+      <div>
+        <input type='text' id='msg' onChange={(e) => setText(e.target.value)} />
+      </div>
+      <div onClick={onClickBtn}>
+        메세지 보내기
+      </div>
+    </div>
   );
 }
 

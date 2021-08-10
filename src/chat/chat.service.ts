@@ -9,12 +9,12 @@ export class ChatService {
   }
 
   findAll() {
-    return `This action returns all chat`;
+    const response = ['채팅1', '채팅2', '채팅3', '채팅4', '채팅5'];
+    return response;
   }
 
   findOne(id: number) {
-    // return `This action returns a #${id} chat`;
-    return new Date();
+    return `This action returns a #${id} chat`;
   }
 
   update(id: number, updateChatDto: UpdateChatDto) {
