@@ -7,7 +7,7 @@ export class RedisIoAdapter extends IoAdapter {
     const server = super.createIOServer(port, options);
     const redisAdapter = redisIoAdapter({
       host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT,
+      port: Number(process.env.REDIS_PORT),
     });
 
     server.adapter(redisAdapter);
