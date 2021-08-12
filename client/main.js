@@ -26,7 +26,7 @@ const app = new Vue({
     },
   },
   created() {
-    this.socket = io('http://localhost:3000/chat');
+    this.socket = io('http://192.168.0.18:3000/chat');
     this.socket.on('msgToClient', (message) => {
       this.receivedMessage(message);
     });

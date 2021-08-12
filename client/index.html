@@ -34,11 +34,11 @@
           placeholder='Enter name...'
         />
         <br />
-        <div class='card'>
+        <div class='card' style='overflow-y: auto; height: 500px; flex-direction:column-reverse;'>
           <div id='messages' class='card-block'>
-            <ul>
+            <ul style='list-style: none; padding-left:0'>
               <li v-for='message of messages'>
-                {{ message.name }}: {{ message.text }}
+                <span style='font-weight: bold'>{{ message.name }}</span>: {{ message.text }}
               </li>
             </ul>
           </div>
