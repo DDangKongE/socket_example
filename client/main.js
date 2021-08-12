@@ -1,18 +1,35 @@
 const app = new Vue({
   el: '#app',
   data: {
-    title: 'Nestjs Websockets Chat',
+    title: 'NestJS Chat Real Time',
     name: '',
     text: '',
+    selected: 'general',
     messages: [],
     socket: null,
+    activeRoom: '',
+    rooms: {
+      general: false,
+      roomA: false,
+      roomB: false,
+      roomC: false,
+      roomD: false,
+    },
+    listRooms: ['general', 'roomA', 'roomB', 'roomC', 'roomD'],
   },
   methods: {
+    onChange(event) {
+      this.socket.emit('leaveRoom', this.activeRoom);
+      this.activeRoom = event.target.value;
+      this.socket.emit('joinRoom', this.activeRoom);
+    },
+
     sendMessage() {
       if (this.validateInput()) {
         const message = {
           name: this.name,
           text: this.text,
+          room: this.activeRoom,
         };
         this.socket.emit('msgToServer', message);
         this.text = '';
@@ -24,11 +41,45 @@ const app = new Vue({
     validateInput() {
       return this.name.length > 0 && this.text.length > 0;
     },
+    check() {
+      if (this.isMemberOfActiveRoom) {
+        this.socket.emit('leaveRoom', this.activeRoom);
+      } else {
+        this.socket.emit('joinRoom', this.activeRoom);
+      }
+    },
+  },
+  computed: {
+    isMemberOfActiveRoom() {
+      return this.rooms[this.activeRoom];
+    },
   },
   created() {
+    this.activeRoom = this.selected;
     this.socket = io('http://192.168.0.18:3000/chat');
     this.socket.on('msgToClient', (message) => {
+      console.log(message);
       this.receivedMessage(message);
+    });
+
+    this.socket.on('connect', () => {
+      this.check();
+    });
+
+    this.socket.on('joinedRoom', (room) => {
+      console.log(room);
+      this.messages = [
+        {
+          name: 'Admin',
+          text: `${room} 채널에 입장하셨습니다.`,
+          room: room,
+        },
+      ];
+      this.rooms[room] = true;
+    });
+
+    this.socket.on('leftRoom', (room) => {
+      this.rooms[room] = false;
     });
   },
 });
